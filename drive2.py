@@ -1,21 +1,32 @@
 import gym
-gym.logger.set_level(40)
+gym.logger.set_level(32)
 
 from stable_baselines3 import PPO
-#from stable_baselines3.common.policies import MlpPolicy
 from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.callbacks import CheckpointCallback, EveryNTimesteps
 
-env = make_vec_env('CarRacing-v0', n_envs=1)
-drive = PPO('MlpPolicy', env, verbose=1)
-drive.learn(total_timesteps=400)
-drive.save("conduziadrive")
+def run():
+    checkpoint_on_event = CheckpointCallback(save_freq=1, save_path='./logs/')
+    event_callback = EveryNTimesteps(n_steps=500, callback=checkpoint_on_event)
 
-del drive
+    env = make_vec_env('CarRacing-v0', n_envs=1)
+    drive = PPO('MlpPolicy', env, verbose=1)
 
-drive = PPO.load("conduziadrive")
+    drive.learn(int(2e4), callback=event_callback)
+    drive.save("conduziadrive")
 
-obs = env.reset()
-while True:
-    action, _states = drive.predict(obs)
-    obs, rewards, dones, info = env.step(action)
-    env.render()
+    del drive
+
+    drive = PPO.load("conduziadrive")
+
+    total_reward = 0.0
+    steps = 0
+    obs = env.reset()
+    while True:
+        action, _states = drive.predict(obs)
+        obs, rewards, dones, info = env.step(action)
+        total_reward += rewards
+        steps += 1
+        env.render()
+
+run()

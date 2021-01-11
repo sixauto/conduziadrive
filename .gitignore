@@ -36,6 +36,7 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+logs/
 
 # Unit test / coverage reports
 htmlcov/
@@ -128,3 +129,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .vscode
+
+# DS_Store remove
+**.DS_Store
