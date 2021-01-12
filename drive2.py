@@ -35,7 +35,7 @@ def run():
     rewards_steps = {}
     while True:
         action, _states = drive.predict(obs)
-        obs, reward, dones, info = env.step(action * np.array([2., 1., 1.]) + np.array([0., 0., 0.]))
+        obs, reward, dones, info = env.step(action)
         score += reward
         steps += 1
         rewards_steps[steps] = reward
