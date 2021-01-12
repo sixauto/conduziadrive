@@ -18,9 +18,9 @@ def run():
     event_callback = EveryNTimesteps(n_steps=500, callback=checkpoint_on_event)
 
     env = make_vec_env('CarRacing-v0', n_envs=1)
-    drive = PPO('MlpPolicy', env, verbose=1)
+    drive = PPO('CnnPolicy', env, verbose=1)
 
-    drive.learn(int(1000), callback=event_callback)
+    drive.learn(int(10000), callback=event_callback)
     drive.save("conduziadrive")
 
     del drive
@@ -36,12 +36,13 @@ def run():
         rewards_steps = {}
         for t in range(1000):
             action, _states = drive.predict(obs)
-            obs, reward, dones, info = env.step(action)
+            obs, reward, dones, info = env.step(action * np.array([2., 1., 1.]) + np.array([-1., -1., 0.]))
             score += reward
             steps += 1
             rewards_steps[steps] = reward
-            env.render()
+            #env.render()
         running_score = running_score * 0.99 + score * 0.01
+        print (running_score)
         if running_score > reward_threshold:
             print("Solved! Reward: {} and the last episode: {}!".format(running_score, score))
             env.close()
