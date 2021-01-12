@@ -27,7 +27,7 @@ def run():
 
     drive = PPO.load("conduziadrive")
 
-    score = 0.0
+    score = 0
     steps = 0
     obs = env.reset()
     running_score = 0
