@@ -11,6 +11,7 @@ from stable_baselines3 import PPO
 
 def run():
     env = gym.make('CarRacing-v0')
+    drive = PPO('CnnPolicy', env, verbose=1)
     drive = PPO.load("conduziadrive.pkl")
 
     running_score = 0
@@ -22,12 +23,14 @@ def run():
     obs = env.reset()
     while True:
         action, _states = drive.predict(obs)
-        obs, reward, done, info = env.step(action * np.array([2., 1., 1.]) + np.array([-1., 0., 0.]))
+        obs, reward, done, info = env.step(action * np.array([2., 1., 1.]) + np.array([0., 0., 0.]))
         score += reward
         steps += 1
         rewards_steps[steps] = reward
         env.render()
         running_score = running_score * 0.99 + score * 0.01
+        if done:
+            env.reset()
         if running_score > reward_threshold:
             print("Solved! Reward: {} and the last episode: {}!".format(running_score, score))
             drive.save("conduziadrivefinal")
