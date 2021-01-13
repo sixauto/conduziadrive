@@ -11,23 +11,18 @@ def load_vars():
 
 def run():
     env = gym.make('CarRacing-v0')
-    drive = PPO('CnnPolicy', env, verbose=1)
-    drive.learn(total_timesteps=100000)
-    drive.save("conduziadrive")
+    drive = PPO.load("conduziadrive.pkl")
 
-    del drive
-
-    drive = PPO.load("conduziadrive")
-
-    obs = env.reset()
     running_score = 0
     steps = 0
     score = 0
     reward_threshold = 900
     rewards_steps = {}
+
+    obs = env.reset()
     while True:
         action, _states = drive.predict(obs)
-        obs, reward, done, info = env.step(action * np.array([2., 1., 1.]) + np.array([-1., -1., 0.]))
+        obs, reward, done, info = env.step(action * np.array([2., 1., 1.]) + np.array([-1., 0., 0.]))
         score += reward
         steps += 1
         rewards_steps[steps] = reward
