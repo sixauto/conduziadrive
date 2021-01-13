@@ -393,7 +393,7 @@ class CarRacing(gym.Env, EzPickle):
 
         return self.state, step_reward, done, {}
 
-    def render(self, mode="rgb_array"):
+    def render(self, mode="human"):
         assert mode in ["human", "state_pixels", "rgb_array"]
         if self.viewer is None:
             from gym.envs.classic_control import rendering

@@ -2,12 +2,12 @@ import gym
 gym.logger.set_level(32)
 import numpy as np
 from stable_baselines3 import PPO
-import pickle
+#import pickle
 
-def load_vars():
-    with open('./objs.pkl', 'rb') as f:
-        rewards, steps = pickle.load(f)
-        return rewards, steps
+#def load_vars():
+#    with open('./objs.pkl', 'rb') as f:
+#        rewards, steps = pickle.load(f)
+#        return rewards, steps
 
 def run():
     env = gym.make('CarRacing-v0')
@@ -33,6 +33,6 @@ def run():
             drive.save("conduziadrivefinal")
             env.close()
             break
-    with open('./objs.pkl', 'wb') as f:
-        pickle.dump(rewards_steps, f)
+    #with open('./objs.pkl', 'wb') as f:
+    #    pickle.dump(rewards_steps, f)
 run()
