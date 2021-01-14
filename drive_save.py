@@ -4,7 +4,8 @@ from stable_baselines3 import PPO
 
 def run():
     env = gym.make('CarRacing-v0')
+    score = 0
     drive = PPO('CnnPolicy', env, verbose=1)
-    drive.learn(total_timesteps=1500)
+    drive.learn(total_timesteps=10000)
     drive.save("conduziadrive.pkl")
 run()
