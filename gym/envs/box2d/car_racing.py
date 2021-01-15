@@ -63,6 +63,7 @@ FPS = 50  # Frames per second
 ZOOM = 2.7  # Camera zoom
 ZOOM_FOLLOW = True  # Set to False for fixed view (don't use zoom)
 
+
 TRACK_DETAIL_STEP = 21 / SCALE
 TRACK_TURN_RATE = 0.31
 TRACK_WIDTH = 40 / SCALE
@@ -70,6 +71,7 @@ BORDER = 8 / SCALE
 BORDER_MIN_COUNT = 4
 
 ROAD_COLOR = [0.4, 0.4, 0.4]
+
 
 class FrictionDetector(contactListener):
     def __init__(self, env):
@@ -376,7 +378,7 @@ class CarRacing(gym.Env, EzPickle):
         step_reward = 0
         done = False
         if action is not None:  # First step without action, called from reset()
-            self.reward -= 0.05
+            self.reward -= 0.1
             # We actually don't want to count fuel spent, we want car to be faster.
             # self.reward -=  10 * self.car.fuel_spent / ENGINE_POWER
             self.car.fuel_spent = 0.0
@@ -391,7 +393,7 @@ class CarRacing(gym.Env, EzPickle):
 
         return self.state, step_reward, done, {}
 
-    def render(self, mode="rgb_array"):
+    def render(self, mode="human"):
         assert mode in ["human", "state_pixels", "rgb_array"]
         if self.viewer is None:
             from gym.envs.classic_control import rendering
