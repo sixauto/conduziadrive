@@ -27,3 +27,7 @@ https://github.com/openai/gym
 ### Gym Car Racing API
 
 https://gym.openai.com/envs/CarRacing-v0/
+
+### PPO2 Documentation
+
+https://stable-baselines3.readthedocs.io/_/downloads/en/master/pdf/
