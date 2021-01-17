@@ -8,37 +8,31 @@ from stable_baselines3.common.env_util import make_vec_env
 
 def train():
     #Recebe e cria o ambiente
-    env = make_vec_env('CarRacing-v0', seed=0, n_envs=1)
-    #Cria o agent
-    drive = PPO(MlpPolicy, env, gamma=0.9997, gae_lambda=1, ent_coef=0.01, vf_coef=1, batch_size=256, learning_rate=5e-6, clip_range=0.1, n_steps=1024, n_epochs=20)
-    # Treina o agent
-    drive = drive.learn(total_timesteps=500000)
-    # Salva o treino feito pelo agent
+    env = make_vec_env('CarRacing-v0', seed=0, n_envs=6)
+    #Cria e Treina o Agent
+    drive = PPO(MlpPolicy, env, gamma=0.9997, gae_lambda=1, ent_coef=0.01, vf_coef=1, batch_size=256, learning_rate=5e-6, clip_range=0.1, n_steps=4096, n_epochs=30).learn(total_timesteps=1600000)
+    # Salva o treino feito pelo Agent
     drive.save("conduziadrive")
 
     #del drive
-    # Faz load automatico dos argumentos
+    # Faz load automatico dos argumentos antes treinados
     #drive = PPO.load("conduziadrive")
 
     # Executa o agent
-    #obs = env.reset()
+    #score = 0
+    #running_score = 0
+    #observation = env.reset()
     #while True:
-    #    score = 0
-    #    running_score = 0
-    #    reward_threshold = 900
-    #    obs = env.reset()
-    #    for t in range(1000):
-    #        action, _states = drive.predict(obs)
-    #        obs, reward, done, info = env.step(action)
-    #        score += reward
-    #        env.render()
-    #        if done.any():
-    #            break
-    #    running_score = running_score * 0.99 + score * 0.01
-    #    print(running_score)
-    #    if running_score > reward_threshold:
-    #        print("Solved! Running reward is now {} and the last episode runs to {}!".format(running_score, score))
-    #        drive.save("conduziadrivefinal")
-    #        break
+    #    env.render()
+    #    action = drive.predict(observation)
+    #    observation, reward, done, info = env.step(action)
+    #    score += reward
+    #    if done.all():
+    #       score = 0
+    #       running_score = 0
+    #       observation = env.reset()
+    #running_score = running_score * 0.99 + score * 0.01
+    #print(running_score)
+    #env.close()
 
 train()
