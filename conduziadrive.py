@@ -21,7 +21,7 @@ def train():
     # Automatically normalize the input features and reward
     env = VecNormalize(env, norm_obs=True, norm_reward=True, gamma=0.9997, clip_obs=10.)
     #Cria o agent
-    drive = PPO(MlpPolicy, env,  gae_lambda=1, ent_coef=0.01, vf_coef=1, learning_rate=linear_schedule(0.001), clip_range=0.1, n_epochs=30, verbose=1)
+    drive = PPO(MlpPolicy, env,  gae_lambda=1, ent_coef=0.01, vf_coef=1, learning_rate=linear_schedule(0.001), clip_range=linear_schedule(0.1), n_epochs=30, verbose=1)
     # Treina o agent
     drive.learn(total_timesteps=25000)
     # Salva o treino
