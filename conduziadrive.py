@@ -1,6 +1,5 @@
 import gym
 gym.logger.set_level(32)
-import numpy as np
 import pybullet
 from typing import Callable
 
@@ -18,22 +17,18 @@ def train():
     #Recebe e cria o ambiente
     env = DummyVecEnv([lambda: gym.make("CarRacing-v0")])
     # Automatically normalize the input features and reward
-    env = VecNormalize(env, training=True, norm_obs=True, norm_reward=True, gamma=0.9997, clip_obs=10., clip_reward=10., epsilon=0.1)
+    env = VecNormalize(env, norm_obs=True, norm_reward=True, gamma=0.9997, clip_obs=10., epsilon=0.1)
     #Cria o agent
-    drive = PPO(MlpPolicy, env, ent_coef=0.01, vf_coef=1, batch_size=32, learning_rate=linear_schedule(0.001), clip_range=linear_schedule(0.1), n_steps=1000, n_epochs=20, verbose=1)
+    drive = PPO(MlpPolicy, env, ent_coef=0.01, vf_coef=1, batch_size=128, learning_rate=linear_schedule(0.001), clip_range=linear_schedule(0.1), n_steps=1000, n_epochs=20, verbose=1)
     # Treina o agent
-    drive.learn(total_timesteps=25000)
-    # Salva o treino
+    drive.learn(total_timesteps=30000)
+    # Sa
     drive.save("conduziadrive")
 
-    del env, drive
-
+def run():
     drive = PPO.load("conduziadrive")
-
     env = DummyVecEnv([lambda: gym.make("CarRacing-v0")])
-    # Automatically normalize the input features and reward
     env = VecNormalize(env, gamma=0.9997, clip_obs=10., epsilon=0.1)
-    rewards = []
     total_rewards = 0
     obs = env.reset()
     while True:
@@ -47,8 +42,3 @@ def train():
             if done:
                 print("Episode {} finished after {} timesteps".format(5, t+1))
                 print("Reward: {}".format(total_rewards))
-                np.append(rewards, total_rewards)
-                print (reward)
-                total_rewards = 0
-
-train()
