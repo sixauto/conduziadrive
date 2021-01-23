@@ -17,19 +17,22 @@ class Node:
 		return self.row, self.col
 
 	def is_closed(self):
-		return self.color == Color.RED
+		return self.color == Color.BLUE
 
 	def is_open(self):
-		return self.color == Color.GREEN
+		return self.color == Color.LIGHT_BLUE
 
 	def is_barrier(self):
-		return self.color == Color.BLACK
+		return self.color == Color.DARK_BLUE
 
 	def is_start(self):
 		return self.color == Color.ORANGE
 
+	def is_path(self):
+		return self.color == Color.LIGHT_YELLOW
+
 	def is_end(self):
-		return self.color == Color.TURQUOISE
+		return self.color == Color.GREEN
 
 	def reset(self):
 		self.color = Color.WHITE
@@ -38,19 +41,19 @@ class Node:
 		self.color = Color.ORANGE
 
 	def make_closed(self):
-		self.color = Color.RED
+		self.color = Color.BLUE
 
 	def make_open(self):
-		self.color = Color.GREEN
+		self.color = Color.LIGHT_BLUE
 
 	def make_barrier(self):
-		self.color = Color.BLACK
+		self.color = Color.DARK_BLUE
 
 	def make_end(self):
-		self.color = Color.TURQUOISE
+		self.color = Color.GREEN
 
 	def make_path(self):
-		self.color = Color.PURPLE
+		self.color = Color.LIGHT_YELLOW
 
 	def draw(self, win):
 		pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.width))
@@ -68,6 +71,3 @@ class Node:
 
 		if self.col > 0 and not grid[self.row][self.col - 1].is_barrier(): # LEFT
 			self.neighbors.append(grid[self.row][self.col - 1])
-
-	def __lt__(self, other):
-		return False

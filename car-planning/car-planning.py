@@ -7,13 +7,14 @@ from modules.graphic_util import *
 
 from algorithms.astar import *
 
-WIDTH = 800
-WIN = pygame.display.set_mode((WIDTH, WIDTH))
-pygame.display.set_caption("A* Path Finding Algorithm")
+WIDTH = 1920
+HEIGHT = 1080
+ROWS = 48   ### ROW / WIDTH should be an integer (48, 60, 64, 80, 96, 120, 128, 160)
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Car planning")
 
 
 def main(win, width):
-	ROWS = 100
 	grid = make_grid(ROWS, width)
 
 	start = None
@@ -53,11 +54,20 @@ def main(win, width):
 
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_SPACE and start and end:
+					clean_grid_except_start_end_barriers(grid)
+					draw(win, grid, ROWS, width)
 					for row in grid:
 						for node in row:
 							node.update_neighbors(grid)
 
-					algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)
+					aStarWithVisualizer(lambda: draw(win, grid, ROWS, width), grid, start, end)
+
+				if event.key == pygame.K_z and start and end:
+					for row in grid:
+						for node in row:
+							node.update_neighbors(grid)
+
+					aStar(lambda: draw(win, grid, ROWS, width), grid, start, end)
 
 				if event.key == pygame.K_c:
 					start = None

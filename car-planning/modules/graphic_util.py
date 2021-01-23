@@ -2,11 +2,6 @@ from modules.color import Color
 from modules.node import Node
 
 import pygame
-    
-def h(p1, p2):
-    x1, y1 = p1
-    x2, y2 = p2
-    return abs(x1 - x2) + abs(y1 - y2)
 
 def make_grid(rows, width):
     grid = []
@@ -45,8 +40,17 @@ def get_clicked_pos(pos, rows, width):
 
     return row, col
 
-def reconstruct_path(came_from, current, draw):
-	while current in came_from:
-		current = came_from[current]
-		current.make_path()
-		draw()
+def reconstruct_path(came_from, current, draw, start_node):
+    while current in came_from:
+        current = came_from[current]
+        if(current.get_pos() == start_node.get_pos()): #if we reached the start node we don't want to color it purple, so we ignore it
+            continue
+        current.make_path()
+        draw()
+
+def clean_grid_except_start_end_barriers(grid):
+    for row in grid:
+        for node in row:
+            if(node.is_closed() or node.is_open() or node.is_path()):
+                node.reset()
+            
