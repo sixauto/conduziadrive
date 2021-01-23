@@ -54,3 +54,11 @@ def clean_grid_except_start_end_barriers(grid):
             if(node.is_closed() or node.is_open() or node.is_path()):
                 node.reset()
             
+def show_elapsed_time(win, time_before, time_after):
+    time_string = "It took {:.2f} seconds to find the path".format(time_after - time_before)
+    font = pygame.font.SysFont("Impact", 30)
+    text = font.render(time_string, True, Color.RED)
+    width, height = pygame.display.get_surface().get_size()
+    win.blit(text, (width/3, height/2))
+    pygame.display.update()
+    pygame.time.wait(3500)
