@@ -6,6 +6,8 @@ from modules.node import Node
 from modules.graphic_util import *
 
 from algorithms.astar import *
+from algorithms.dijkstras import *
+
 
 WIDTH = 1920
 HEIGHT = 1080
@@ -60,7 +62,7 @@ def main(win, width):
 						for node in row:
 							node.update_neighbors(grid)
 
-					aStarWithVisualizer(lambda: draw(win, grid, ROWS, width), grid, start, end)
+					dijkstrasWithVisualizer(lambda: draw(win, grid, ROWS, width), grid, start, end)
 
 				if event.key == pygame.K_z and start and end:
 					for row in grid:
