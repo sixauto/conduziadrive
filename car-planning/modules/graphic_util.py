@@ -2,6 +2,7 @@ from modules.color import Color
 from modules.node import Node
 
 import pygame
+import pickle
 
 def make_grid(rows, width):
     grid = []
@@ -61,4 +62,18 @@ def show_elapsed_time(win, time_before, time_after):
     width, height = pygame.display.get_surface().get_size()
     win.blit(text, (width/3, height/2))
     pygame.display.update()
-    pygame.time.wait(3500)
+    pygame.time.wait(3000)
+
+def save_grid_to_file(grid):
+    for row in grid:
+        for node in row:
+            if(node.is_closed() or node.is_open() or node.is_path() or node.is_start() or node.is_end()):
+                node.reset()
+
+    with open('grid_file', 'wb') as f:  
+        pickle.dump(grid, f)
+
+def load_grid_from_file(map_name):
+    with open(map_name, 'rb') as f:
+        grid = pickle.load(f)
+        return grid

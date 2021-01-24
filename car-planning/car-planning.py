@@ -9,13 +9,12 @@ from modules.graphic_util import *
 from algorithms.astar import *
 from algorithms.dijkstras import *
 
-
 WIDTH = 1920
 HEIGHT = 1080
-ROWS = 48   ### ROW / WIDTH should be an integer (48, 60, 64, 80, 96, 120, 128, 160)
+ROWS = 80   ### ROW / WIDTH should be an integer (48, 60, 64, 80, 96, 120, 128, 160)
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 SELECTED_ALGORITHM = "dijkstras"
-selected_environment = "city"
+SELECTED_ENVIRONMENT = "factory_grid"
 pygame.display.set_caption("Car planning")
 
 def menu(win):
@@ -37,7 +36,12 @@ def set_algorithm(value, algorithm):
 		SELECTED_ALGORITHM = "astar"
 
 def set_environment(value, environment):
-    selected_environment = environment
+	global SELECTED_ENVIRONMENT
+
+	if(environment == 1):
+		SELECTED_ENVIRONMENT = "factory_grid"
+	elif(environment == 2):
+		SELECTED_ENVIRONMENT = "city_grid"
 
 def start():
 	main(WIN)
@@ -47,6 +51,11 @@ def main(win):
 	print("early " + SELECTED_ALGORITHM)
 
 	grid = make_grid(ROWS, WIDTH)
+
+	if(SELECTED_ENVIRONMENT is not None):
+		print("entrei aqui")
+		grid = load_grid_from_file(SELECTED_ENVIRONMENT)
+	
 
 	start = None
 	end = None
@@ -120,7 +129,7 @@ def main(win):
 
 				if event.key == pygame.K_m:
 					menu(WIN)
-
+	save_grid_to_file(grid)
 	pygame.quit()
 
 
