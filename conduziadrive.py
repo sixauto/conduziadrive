@@ -1,6 +1,7 @@
 import gym
 gym.logger.set_level(40)
 
+from datetime import datetime
 import pybullet
 import numpy as np
 from typing import Callable
@@ -23,34 +24,28 @@ def linear_schedule(initial_value: float) -> Callable[[float], float]:
         return progress_remaining * initial_value
     return func
 
+
 def train():
     env = DummyVecEnv([lambda: gym.make("CarRacing-v0")])
     env = VecNormalize(env, norm_obs=True, norm_reward=True, gamma=0.9997, clip_obs=10., epsilon=0.1)
 
-    drive = PPO(MlpPolicy, env, ent_coef=0.01, vf_coef=1, batch_size=128, learning_rate=linear_schedule(0.001), clip_range=linear_schedule(0.1), n_steps=1000, n_epochs=20, verbose=1)
+    drive = PPO(MlpPolicy, env, ent_coef=0.01, vf_coef=1, batch_size=128, learning_rate=linear_schedule(0.001),
+                clip_range=linear_schedule(0.1), n_steps=1000, n_epochs=20, verbose=1)
 
     checkpoint_callback = CheckpointCallback(save_freq=10000, save_path='./logs/', name_prefix='drive_checkpoint')
 
     drive.learn(total_timesteps=40000, callback=checkpoint_callback)
-    env.close()
-    drive.learn(total_timesteps=40000, callback=checkpoint_callback, reset_num_timesteps=False)
-    env.close()
-    drive.learn(total_timesteps=40000, callback=checkpoint_callback, reset_num_timesteps=False)
-    env.close()
-    drive.learn(total_timesteps=40000, callback=checkpoint_callback, reset_num_timesteps=False)
-    env.close()
-    drive.learn(total_timesteps=40000, callback=checkpoint_callback, reset_num_timesteps=False)
-    env.close()
-    drive.learn(total_timesteps=40000, callback=checkpoint_callback, reset_num_timesteps=False)
-    env.close()
-    drive.learn(total_timesteps=40000, callback=checkpoint_callback, reset_num_timesteps=False)
-    env.close()
-    drive.learn(total_timesteps=40000, callback=checkpoint_callback, reset_num_timesteps=False)
+    runs = 7
 
-    drive.save("drive_train")
+    for i in range(runs):
+        env.close()
+        drive.learn(total_timesteps=40000, callback=checkpoint_callback, reset_num_timesteps=False)
+
+    drive.save("drive_train_{}".format(datetime.now().strftime("%d/%m/%Y_%H:%M:%S")))
 
     mean_reward, std_reward = evaluate_policy(drive, env, n_eval_episodes=10)
     print(f'Mean reward: {mean_reward} +/- {std_reward:.2f}')
+
 
 def run():
     drive = PPO.load("./logs/drive_checkpoint_320000_steps")
@@ -64,7 +59,6 @@ def run():
     rewards = []
     total_reward = 0
 
-    obs = env.reset()
     while True:
         obs = env.reset()
 
@@ -76,13 +70,17 @@ def run():
             obs, reward, done, info = env.step(action)
             env.render()
             total_reward += reward
-        if(t % 100 == 0):
-            print(t)
-        if done or t == 999:
-            print("Finished after {} timesteps".format(t+1))
-            print("Reward: {}".format(total_reward))
-            rewards.append(total_reward)
-            env.close()
+            if t % 100 == 0:
+                print(t)
+            if done:
+                break
+
+        
+        print("Finished after {} timesteps".format(t+1))
+        print("Reward: {}".format(total_reward))
+        rewards.append(total_reward)
+        env.close()
+
 
 virtual_display()
 #train()

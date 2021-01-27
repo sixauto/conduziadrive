@@ -21,7 +21,7 @@ pygame.display.set_caption("Car planning")
 class Algorithms:
     DIJKSTRAS = 1
     ASTAR = 2
-    GBFS =  3
+    GBFS = 3
 
     @classmethod
     def get_algorithm(cls, value: int):
