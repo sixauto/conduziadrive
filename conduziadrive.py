@@ -30,11 +30,11 @@ def train():
     env = VecNormalize(env, norm_obs=True, norm_reward=True, gamma=0.9997, clip_obs=10., epsilon=0.1)
 
     drive = PPO(MlpPolicy, env, ent_coef=0.01, vf_coef=1, batch_size=128, learning_rate=linear_schedule(0.001),
-                clip_range=linear_schedule(0.1), n_steps=1000, n_epochs=20, verbose=1)
+                clip_range=linear_schedule(0.1), n_steps=1000, n_epochs=20, tensorboard_log="drive_tensor_log_{}".format(datetime.now().strftime("%d/%m/%Y_%H:%M:%S")),verbose=1)
 
     checkpoint_callback = CheckpointCallback(save_freq=10000, save_path='./logs/', name_prefix='drive_checkpoint')
 
-    drive.learn(total_timesteps=40000, callback=checkpoint_callback)
+    drive.learn(total_timesteps=40000 ,callback=checkpoint_callback)
     runs = 7
 
     for i in range(runs):
@@ -53,16 +53,13 @@ def run():
     env = DummyVecEnv([lambda: gym.make("CarRacing-v0")])
     env = VecNormalize(env, norm_obs=True, norm_reward=True, gamma=0.9997, clip_obs=10., epsilon=0.1)
 
-    mean_reward, std_reward = evaluate_policy(drive, env, n_eval_episodes=10)
-    print(f'Mean reward: {mean_reward} +/- {std_reward:.2f}')
-
     rewards = []
     total_reward = 0
 
     while True:
         obs = env.reset()
 
-        mean_reward, std_reward = evaluate_policy(drive, env, n_eval_episodes=10)
+        mean_reward, std_reward = evaluate_policy(drive, env, n_eval_episodes=30)
         print(f'Mean reward: {mean_reward} +/- {std_reward:.2f}')
 
         for t in range(1000):
@@ -74,14 +71,13 @@ def run():
                 print(t)
             if done:
                 break
-
-        
         print("Finished after {} timesteps".format(t+1))
         print("Reward: {}".format(total_reward))
+        drive.save("drive_train_final_{}".format(datetime.now().strftime("%d/%m/%Y_%H:%M:%S")))
         rewards.append(total_reward)
         env.close()
 
 
 virtual_display()
-#train()
-run()
+train()
+#run()
