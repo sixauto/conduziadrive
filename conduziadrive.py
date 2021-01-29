@@ -34,12 +34,12 @@ def train():
 
     checkpoint_callback = CheckpointCallback(save_freq=10000, save_path='./logs/', name_prefix='drive_checkpoint')
 
-    drive.learn(total_timesteps=40000 ,callback=checkpoint_callback)
-    runs = 7
+    drive.learn(total_timesteps=200000 ,callback=checkpoint_callback)
+    #runs = 7
 
-    for i in range(runs):
-        env.close()
-        drive.learn(total_timesteps=40000, callback=checkpoint_callback, reset_num_timesteps=False)
+    #for i in range(runs):
+    #    env.close()
+    #    drive.learn(total_timesteps=40000, callback=checkpoint_callback, reset_num_timesteps=False)
 
     drive.save("drive_train_{}".format(datetime.now().strftime("%d/%m/%Y_%H:%M:%S")))
 
