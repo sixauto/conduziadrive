@@ -13,7 +13,6 @@ from stable_baselines3.ppo import MlpPolicy
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
-from stable_baselines3.common.callbacks import CheckpointCallback
 
 def virtual_display():
     display = Display(visible=False, size=(100, 60), color_depth=24)
@@ -27,14 +26,16 @@ def linear_schedule(initial_value: float) -> Callable[[float], float]:
 
 def train():
     env = DummyVecEnv([lambda: gym.make("CarRacing-v0")])
-    env = VecNormalize(env, norm_obs=True, norm_reward=True, gamma=0.9997, clip_obs=10., epsilon=0.1)
+    env = VecNormalize(env, norm_obs=True, norm_reward=True, gamma=0.9997, clip_reward=10., clip_obs=10., epsilon=0.3)
 
     drive = PPO(MlpPolicy, env, ent_coef=0.01, vf_coef=1, batch_size=128, learning_rate=linear_schedule(0.001),
-                clip_range=linear_schedule(0.1), n_steps=1000, n_epochs=20, tensorboard_log="drive_tensor_log_{}".format(datetime.now().strftime("%d/%m/%Y_%H:%M:%S")),verbose=1)
+                clip_range=linear_schedule(0.1), n_steps=250, n_epochs=10, tensorboard_log="drive_tensor_log_{}".format(datetime.now().strftime("%d/%m/%Y_%H:%M:%S")), verbose=1)
 
-    checkpoint_callback = CheckpointCallback(save_freq=10000, save_path='./logs/', name_prefix='drive_checkpoint')
+    drive.learn(total_timesteps=100000)
 
-    drive.learn(total_timesteps=200000 ,callback=checkpoint_callback)
+    mean_reward, std_reward = evaluate_policy(drive, env, n_eval_episodes=5)
+    print(f'Mean reward: {mean_reward} +/- {std_reward:.2f}')
+
     #runs = 7
 
     #for i in range(runs):
@@ -43,12 +44,9 @@ def train():
 
     drive.save("drive_train_{}".format(datetime.now().strftime("%d/%m/%Y_%H:%M:%S")))
 
-    mean_reward, std_reward = evaluate_policy(drive, env, n_eval_episodes=10)
-    print(f'Mean reward: {mean_reward} +/- {std_reward:.2f}')
-
 
 def run():
-    drive = PPO.load("./logs/drive_checkpoint_320000_steps")
+    drive = PPO.load("")
 
     env = DummyVecEnv([lambda: gym.make("CarRacing-v0")])
     env = VecNormalize(env, norm_obs=True, norm_reward=True, gamma=0.9997, clip_obs=10., epsilon=0.1)
@@ -78,6 +76,6 @@ def run():
         env.close()
 
 
-virtual_display()
+#virtual_display()
 train()
 #run()
