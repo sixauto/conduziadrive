@@ -9,18 +9,11 @@
 /dist/
 /build
 
-
-# Virtualenv
-/car_drive/venv
-
 # Python egg metadata, regenerated from source files by setuptools.
 /*.egg-info
 
 *.sublime-project
 *.sublime-workspace
-
-logs/
-conduzia_drive_tensor_log/
 
 .ipynb_checkpoints
 ghostdriver.log
@@ -31,6 +24,7 @@ MUJOCO_LOG.txt
 rllab_mujoco
 
 tutorial/*.html
+car_drive/venv
 
 # IDE files
 .eggs
