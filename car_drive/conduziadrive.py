@@ -16,13 +16,14 @@ gym_env_id = "CarRacing-v0"
 gym_env_mode = "human"
 env = DummyVecEnv([lambda: gym.make(gym_env_id)])
 env = VecNormalize(env, gamma=0.9997, norm_obs=True, norm_reward=True, clip_obs = 10., epsilon=0.2)
-drive = PPO("MlpPolicy", env, ent_coef=0.01, vf_coef=1, batch_size=125, learning_rate=0.0001, clip_range=0.1, 
-            n_steps=250, n_epochs=20, tensorboard_log="conduzia_drive_tensor_log", verbose=1)
 
 def train(env):
     total_timesteps = 40000
     total_train_runs = 60
     action_space = [[0, 0, 0], [1, 0, 0], [-1, 0, 0], [0, 1, .8], [0, 0, 1]]
+    
+    drive = PPO("MlpPolicy", env, ent_coef=0.01, vf_coef=1, batch_size=125, learning_rate=0.0001, clip_range=0.1, 
+            n_steps=250, n_epochs=20, tensorboard_log="conduzia_drive_tensor_log", verbose=1)
 
     drive.learn(total_timesteps=total_timesteps)
 
