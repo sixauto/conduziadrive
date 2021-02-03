@@ -13,19 +13,16 @@ parser.add_argument('--train', action='store_true', help='Train the agent')
 parser.add_argument('--run', action='store_true', help='Run the agent')
 
 gym_env_id = "CarRacing-v0"
+gym_env_mode = "human"
 env = DummyVecEnv([lambda: gym.make(gym_env_id)])
 env = VecNormalize(env, gamma=0.9997, norm_obs=True, norm_reward=True, clip_obs = 10., epsilon=0.2)
+drive = PPO("MlpPolicy", env, ent_coef=0.01, vf_coef=1, batch_size=125, learning_rate=0.0001, clip_range=0.1, 
+            n_steps=250, n_epochs=20, tensorboard_log="conduzia_drive_tensor_log", verbose=1)
 
 def train(env):
-
-    gym_env_mode = "human"
     total_timesteps = 40000
     total_train_runs = 60
     action_space = [[0, 0, 0], [1, 0, 0], [-1, 0, 0], [0, 1, .8], [0, 0, 1]]
-
-
-    drive = PPO("MlpPolicy", env, ent_coef=0.01, vf_coef=1, batch_size=125, learning_rate=0.0001, clip_range=0.1, 
-                n_steps=250, n_epochs=20, tensorboard_log="conduzia_drive_tensor_log", verbose=1)
 
     drive.learn(total_timesteps=total_timesteps)
 
@@ -37,11 +34,6 @@ def train(env):
 
 
 def run(env):
-    try:
-        del drive
-    except NameError:
-        pass
-
     drive = PPO.load("conduzia_drive_train")
 
     env = VecVideoRecorder(env, 'logs/videos/',
