@@ -6,17 +6,23 @@ from typing import Callable
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize, VecVideoRecorder
+import argparse
 
+parser = argparse.ArgumentParser(description='CarRacing-v0')
+parser.add_argument('--train', action='store_true', help='Train the agent')
+parser.add_argument('--run', action='store_true', help='Run the agent')
 
-def train():
-    gym_env_id = "CarRacing-v0"
+gym_env_id = "CarRacing-v0"
+env = DummyVecEnv([lambda: gym.make(gym_env_id)])
+env = VecNormalize(env, gamma=0.9997, norm_obs=True, norm_reward=True, clip_obs = 10., epsilon=0.2)
+
+def train(env):
+
     gym_env_mode = "human"
     total_timesteps = 40000
     total_train_runs = 60
     action_space = [[0, 0, 0], [1, 0, 0], [-1, 0, 0], [0, 1, .8], [0, 0, 1]]
 
-    env = DummyVecEnv([lambda: gym.make(gym_env_id)])
-    env = VecNormalize(env, gamma=0.9997, norm_obs=True, norm_reward=True, clip_obs = 10., epsilon=0.2)
 
     drive = PPO("MlpPolicy", env, ent_coef=0.01, vf_coef=1, batch_size=125, learning_rate=0.0001, clip_range=0.1, 
                 n_steps=250, n_epochs=20, tensorboard_log="conduzia_drive_tensor_log", verbose=1)
@@ -29,7 +35,12 @@ def train():
 
     drive.save("conduzia_drive_train")
 
-    del drive
+
+def run(env):
+    try:
+        del drive
+    except NameError:
+        pass
 
     drive = PPO.load("conduzia_drive_train")
 
@@ -57,4 +68,10 @@ def train():
         rewards.append(total_reward)
         env.close()
 
-train()
+args = parser.parse_args()
+
+if args.train:
+    train(env)
+
+if args.run:
+    run(env)
