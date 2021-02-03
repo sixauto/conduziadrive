@@ -1,2 +1,43 @@
-.vscode
-conduzia_venv/
+*.swp
+*.pyc
+*.py~
+.DS_Store
+.cache
+.pytest_cache/
+
+# Setuptools distribution and build folders.
+/dist/
+/build
+
+
+# Virtualenv
+/env
+/conduzia_venv
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+
+*.sublime-project
+*.sublime-workspace
+
+logs/
+conduzia_drive_tensor_log/
+
+.ipynb_checkpoints
+ghostdriver.log
+
+junk
+MUJOCO_LOG.txt
+
+rllab_mujoco
+
+tutorial/*.html
+
+# IDE files
+.eggs
+.tox
+
+# PyCharm project files
+.idea
+vizdoom.ini
+.DS_Store
