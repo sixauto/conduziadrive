@@ -7,12 +7,12 @@ from typing import Callable
 from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize, VecVideoRecorder
 
-gym_env_id = "CarRacing-v0"
-gym_env_mode = "human"
-total_timesteps = 10000
-total_train_runs = 0
 
 def train():
+    gym_env_id = "CarRacing-v0"
+    gym_env_mode = "human"
+    total_timesteps = 40000
+    total_train_runs = 60
     action_space = [[0, 0, 0], [1, 0, 0], [-1, 0, 0], [0, 1, .8], [0, 0, 1]]
 
     env = DummyVecEnv([lambda: gym.make(gym_env_id)])
