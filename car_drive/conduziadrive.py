@@ -19,7 +19,7 @@ parser.add_argument('--run', action='store_true', help='Run the agent')
 
 gym_env_id = "CarRacing-v0"
 total_timesteps = 40000
-total_train_runs = 50
+total_train_runs = 60
 log_dir = "logs/car_drive/monitor"
 env = make_vec_env("CarRacing-v0", n_envs=1, monitor_dir=log_dir)
 
@@ -62,9 +62,13 @@ def train(env, log_dir):
 
     env = VecNormalize(env, training=True, norm_obs=True, norm_reward=True, gamma=0.9997, clip_obs=10., clip_reward=10., epsilon=0.1)
 
-    drive = PPO("MlpPolicy", env, ent_coef=0.01, vf_coef=1, batch_size=32, learning_rate=linear_schedule(0.001), clip_range=linear_schedule(0.1), n_steps=1000, n_epochs=20, verbose=1)
+    drive = PPO("MlpPolicy", env, ent_coef=0.01, vf_coef=1, batch_size=32, learning_rate=linear_schedule(0.001), clip_range=linear_schedule(0.1), n_steps=1000, n_epochs=20, tensorboard_log=log_dir + "/drive_tensorboard_log", verbose=1)
 
     drive.learn(total_timesteps=total_timesteps, callback=callback)
+
+    for i in range(total_train_runs):
+        env.close()
+        drive.learn(total_timesteps=total_timesteps, callback=callback, reset_num_timesteps=False)
 
     drive.save("conduziadrive")
 
@@ -72,11 +76,11 @@ def train(env, log_dir):
 def run(env):
     drive = PPO.load("conduziadrive")
 
-    env = VecVideoRecorder(env, 'logs/videos/',
+    env = VecVideoRecorder(env, log_dir + '/videos/',
                        record_video_trigger=lambda x: x == 0, video_length=1000,
                        name_prefix="conduzia-drive-agent-{}".format(gym_env_id))
 
-    env = VecNormalize(env, gamma=0.9997, clip_obs=10., epsilon=0.1)
+    env = VecNormalize(env, gamma=0.9997, norm_obs=True, norm_reward=True, clip_obs=10., epsilon=0.1)
 
     rewards = []
     total_reward = 0
